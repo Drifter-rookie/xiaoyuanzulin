@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idleItem.tradeSystem.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.idleItem.tradeSystem.entity.Order">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="idle_id" jdbcType="BIGINT" property="idleId" />
+    <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+    <result column="payment_status" jdbcType="TINYINT" property="paymentStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="seller" jdbcType="BIGINT" property="seller" />
+    <result column="status" jdbcType="BIGINT" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_number, user_id, idle_id,order_price, payment_status, create_time,
+    payment_time, order_status,seller,status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from orders
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getMyOrder" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from orders
+    where user_id = #{userId,jdbcType=BIGINT}
+    order by id desc
+  </select>
+  <select id="getAllOrder" parameterType="int" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from orders
+    order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="countAllOrder" resultType="int">
+    select  count(*) from orders
+  </select>
+  <select id="countmyOrders" resultType="int">
+    select count(*) from orders
+    where seller = #{id,jdbcType=BIGINT} and status=1
+  </select>
+  <select id="findOrderByIdleIdList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from orders where idle_id in
+    <foreach collection="idleIdList" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    order by id desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from orders
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.Order" useGeneratedKeys="true">
+    insert into orders (order_number, user_id, idle_id,order_price, payment_status, create_time, payment_time, order_status,seller,status)
+    values (#{orderNumber,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{idleId,jdbcType=BIGINT}, #{orderPrice,jdbcType=DECIMAL}, #{paymentStatus,jdbcType=TINYINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{paymentTime,jdbcType=TIMESTAMP}, #{orderStatus,jdbcType=TINYINT},0,0)
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.idleItem.tradeSystem.entity.Order">
+    update orders
+    <set>
+      <if test="orderNumber != null">
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="idleId != null">
+        idle_id = #{idleId,jdbcType=BIGINT},
+      </if>
+      <if test="orderPrice != null">
+        order_price = #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentStatus != null">
+        payment_status = #{paymentStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentTime != null">
+        payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderStatus != null">
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="seller != null">
+        seller = #{seller,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.idleItem.tradeSystem.entity.Order">
+    update orders
+    set order_number = #{orderNumber,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      idle_id = #{idleId,jdbcType=BIGINT},
+      order_price = #{orderPrice,jdbcType=DECIMAL},
+      payment_status = #{paymentStatus,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      order_status = #{orderStatus,jdbcType=TINYINT},
+      seller = #{seller,jdbcType=BIGINT},
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updatestatus">
+    update orders
+    set status = 1,seller=#{userid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updatestatus1">
+    update orders
+    set status = 0
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idleItem.tradeSystem.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.idleItem.tradeSystem.entity.Message">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="idle_id" jdbcType="BIGINT" property="idleId" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="to_user" jdbcType="BIGINT" property="toUser" />
+    <result column="to_message" jdbcType="BIGINT" property="toMessage" />
+    <result column="status" jdbcType="BIGINT" property="status" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, idle_id, content, create_time, to_user, to_message,status,picture
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from message
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getMyMessage" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from message
+    where to_user = #{userId,jdbcType=BIGINT} order by id desc
+  </select>
+  <select id="getIdleMessage" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from message
+    where idle_id = #{idleId,jdbcType=BIGINT} order by id desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sh_message
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.Message" useGeneratedKeys="true">
+    insert into message (user_id, idle_id, content,
+      create_time, to_user, to_message,status,picture
+      )
+    values (#{userId,jdbcType=BIGINT}, #{idleId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{toUser,jdbcType=BIGINT}, #{toMessage,jdbcType=BIGINT},1, #{picture,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.idleItem.tradeSystem.entity.Message">
+    update message
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="idleId != null">
+        idle_id = #{idleId,jdbcType=BIGINT},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="toUser != null">
+        to_user = #{toUser,jdbcType=BIGINT},
+      </if>
+      <if test="toMessage != null">
+        to_message = #{toMessage,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIGINT},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.idleItem.tradeSystem.entity.Message">
+    update message
+    set user_id = #{userId,jdbcType=BIGINT},
+      idle_id = #{idleId,jdbcType=BIGINT},
+      content = #{content,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      to_user = #{toUser,jdbcType=BIGINT},
+      to_message = #{toMessage,jdbcType=BIGINT},
+      status = #{status,jdbcType=BIGINT},
+      picture = #{picture,jdbcType=VARCHAR},
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updatestatus">
+    update message
+    set status = 0
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idleItem.tradeSystem.mapper.ReportUserMapper">
+    <resultMap id="BaseResultMap" type="com.idleItem.tradeSystem.entity.ReportUser">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="report_details" jdbcType="VARCHAR" property="reportDetails" />
+        <result column="report_label" jdbcType="VARCHAR" property="reportLabel" />
+        <result column="picture_list" jdbcType="VARCHAR" property="pictureList" />
+        <result column="reporter_id" jdbcType="VARCHAR" property="reporterId" />
+        <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+        <result column="handle_status" jdbcType="TINYINT" property="handleStatus" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_name,user_id, report_details, report_label,picture_list, reporter_id, report_time,handle_status
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="countNormalReportUser" resultType="int">
+        select count(*) from report_user
+        where handle_status is null or handle_status = 0
+    </select>
+    <select id="countBanReportUser" resultType="int">
+        select count(*) from report_user
+        where handle_status = 1
+    </select>
+    <select id="getReport2List" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_user
+    </select>
+    <select id="getNormalReportUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_user where handle_status is null or handle_status = 0 order by id desc limit #{begin}, #{nums}
+    </select>
+    <select id="getBanReportUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_user where handle_status = 1 order by id desc limit #{begin}, #{nums}
+    </select>
+    <select id="findReportUserByList" resultMap="BaseResultMap">
+        select userName, id,nickname, avatar, campus, sign_in_time
+        from report_user where id in
+        <foreach collection="idList" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from report_user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.ReportUser" useGeneratedKeys="true">
+        insert into report_user ( user_name, user_id, report_details, report_label,picture_list, reporter_id, report_time,handle_status)
+        values (#{userName,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{reportDetails,jdbcType=VARCHAR}, #{reportLabel,jdbcType=VARCHAR},
+                #{pictureList,jdbcType=VARCHAR}, #{reporterId,jdbcType=VARCHAR}, #{reportTime,jdbcType=TIMESTAMP},#{handleStatus,jdbcType=TINYINT})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.idleItem.tradeSystem.entity.ReportUser">
+        update report_user
+        <set>
+            <if test="userName != null">
+               user_name=#{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id=#{userId,jdbcType=BIGINT},
+            </if>
+            <if test="reportDetails != null">
+                report_details=#{reportDetails,jdbcType=BIGINT},
+            </if>
+            <if test="reportLabel != null">
+                report_label=#{reportLabel,jdbcType=DECIMAL},
+            </if>
+            <if test="pictureList != null">
+                picture_list=#{pictureList,jdbcType=TINYINT},
+            </if>
+            <if test="userId != null">
+                user_id=#{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="reportTime != null">
+                report_time=#{reportTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="handleStatus != null">
+                handle_status=#{handleStatus,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.ReportUser" useGeneratedKeys="true">
+        insert into report_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="reportDetails != null">
+                report_details,
+            </if>
+            <if test="reportLabel != null">
+                report_label,
+            </if>
+            <if test="pictureList != null">
+                picture_list,
+            </if>
+            <if test="reporterId != null">
+                reporter_id,
+            </if>
+            <if test="reportTime != null">
+                report_time,
+            </if>
+            <if test="handleStatus != null">
+                handle_status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="reportDetails != null">
+                #{reportDetails,jdbcType=BIGINT},
+            </if>
+            <if test="reportLabel != null">
+                #{reportLabel,jdbcType=DECIMAL},
+            </if>
+            <if test="pictureList != null">
+                #{pictureList,jdbcType=TINYINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="reportTime != null">
+                #{reportTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="handleStatus != null">
+                #{handleStatus,jdbcType=TINYINT},
+            </if>
+
+        </trim>
+    </insert>
+</mapper>

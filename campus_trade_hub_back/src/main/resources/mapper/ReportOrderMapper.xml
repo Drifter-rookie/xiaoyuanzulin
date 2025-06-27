@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idleItem.tradeSystem.mapper.ReportOrderMapper">
+    <resultMap id="BaseResultMap" type="com.idleItem.tradeSystem.entity.ReportOrder">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+        <result column="report_reason" jdbcType="VARCHAR" property="reportReason" />
+        <result column="reporter_id" jdbcType="VARCHAR" property="reporterId" />
+        <result column="tran_status" jdbcType="VARCHAR" property="tranStatus" />
+        <result column="deal_way" jdbcType="VARCHAR" property="dealWay" />
+        <result column="report_details" jdbcType="VARCHAR" property="reportDetails" />
+        <result column="picture_list" jdbcType="VARCHAR" property="pictureList" />
+        <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+        <result column="handle_status" jdbcType="TINYINT" property="handleStatus" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, order_id,report_reason , reporter_id,tran_status, deal_way,picture_List, report_details, report_Time,handle_status
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_order
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="countNormalReportOrder" resultType="int">
+        select count(*) from report_order
+        where handle_status is null or handle_status = 0
+    </select>
+    <select id="countBanReportOrder" resultType="int">
+        select count(*) from report_order
+        where handle_status = 1
+    </select>
+    <select id="getReport3List" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_order
+    </select>
+    <select id="getNormalReportOrder" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_order where handle_status is null or handle_status = 0 order by id desc limit #{begin}, #{nums}
+    </select>
+    <select id="getBanReportOrder" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from report_order where handle_status = 1 order by id desc limit #{begin}, #{nums}
+    </select>
+    <select id="findReportOrderByList" resultMap="BaseResultMap">
+        select reportName, id,nickname, avatar, campus, sign_in_time
+        from report_order where id in
+        <foreach collection="idList" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from report_order
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.ReportOrder" useGeneratedKeys="true">
+        insert into report_order (order_id,report_reason , reporter_id,tran_status, deal_way,picture_List, report_details, report_Time,handle_status)
+        values (#{orderId,jdbcType=VARCHAR}, #{reportReason,jdbcType=VARCHAR},#{reporterId,jdbcType=VARCHAR},#{tranStatus,jdbcType=VARCHAR},#{dealWay,jdbcType=VARCHAR},
+                #{pictureList,jdbcType=VARCHAR},#{reportDetails,jdbcType=VARCHAR},  #{reportTime,jdbcType=TIMESTAMP},#{handleStatus,jdbcType=TINYINT})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.idleItem.tradeSystem.entity.ReportOrder">
+        update report_order
+        <set>
+            <if test="handleStatus != null">
+                handle_status=#{handleStatus,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.ReportOrder" useGeneratedKeys="true">
+        insert into reportOrder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reportName != null">
+                report_Name,
+            </if>
+            <if test="reportId != null">
+                report_Id,
+            </if>
+            <if test="reportDetails != null">
+                idle_Details,
+            </if>
+            <if test="reportReason != null">
+                idle_Label,
+            </if>
+            <if test="pictureList != null">
+                picture_List,
+            </if>
+            <if test="reporterId != null">
+                user_Id,
+            </if>
+            <if test="reportTime != null">
+                report_Time,
+            </if>
+            <if test="handleStatus != null">
+                handle_status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reportName != null">
+                #{idleName,jdbcType=VARCHAR},
+            </if>
+            <if test="reportUser != null">
+                #{idleUser,jdbcType=BIGINT},
+            </if>
+            <if test="reportDetails != null">
+                #{reportDetails,jdbcType=BIGINT},
+            </if>
+            <if test="idleLabel != null">
+                #{idleLabel,jdbcType=DECIMAL},
+            </if>
+            <if test="pictureList != null">
+                #{pictureList,jdbcType=TINYINT},
+            </if>
+            <if test="reporterId != null">
+                #{reporterId,jdbcType=VARCHAR},
+            </if>
+            <if test="reportTime != null">
+                #{reportTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="report1Status != null">
+                #{report1Status,jdbcType=TINYINT},
+            </if>
+
+        </trim>
+    </insert>
+
+
+</mapper>

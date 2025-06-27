@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idleItem.tradeSystem.mapper.NoticeMapper">
+    <resultMap id="BaseResultMap" type="com.idleItem.tradeSystem.entity.Notice">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="notice_type" jdbcType="VARCHAR" property="noticeType" />
+        <result column="key_sentence" jdbcType="VARCHAR" property="keySentence" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="announce_time" jdbcType="TIMESTAMP" property="announceTime" />
+        <result column="admin_id" jdbcType="BIGINT" property="adminId" />
+        <result column="admin_name" jdbcType="VARCHAR" property="adminName" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, notice_type,key_sentence, content, announce_time, admin_id, admin_name
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from notice
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="getNotice" resultMap="BaseResultMap">
+        select *
+        from notice
+    </select>
+    <select id="getAllNotice" resultMap="BaseResultMap">
+        select *
+        from notice
+        limit #{begin}, #{nums}
+    </select>
+    <select id="getCount" resultType="int">
+        select count(*) from notice
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from notice
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.Address" useGeneratedKeys="true">
+        insert into notice (notice_type,key_sentence, content, announce_time, admin_id, admin_name)
+        values (#{noticeType,jdbcType=VARCHAR},#{keySentence,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR}, #{announceTime,jdbcType=TIMESTAMP},
+                #{adminId,jdbcType=BIGINT}, #{adminName,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.Address" useGeneratedKeys="true">
+        insert into notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="keySentence != null">
+                key_sentence,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="announceTime != null">
+                announce_time,
+            </if>
+            <if test="adminId!= null">
+                adminId,
+            </if>
+            <if test="adminName!= null">
+                admin_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="keySentence != null">
+                #{keySentence,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="announceTime != null">
+                #{announceTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="adminId != null">
+                #{adminId,jdbcType=BIGINT},
+            </if>
+            <if test="adminName != null">
+                #{adminName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.idleItem.tradeSystem.entity.Address">
+        update notice
+        <set>
+            <if test="keySentence != null">
+                #{keySentence,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="announceTime != null">
+                #{announceTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="adminId != null">
+                #{adminId,jdbcType=BIGINT},
+            </if>
+            <if test="adminName != null">
+                #{adminName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByUserIdSelective" parameterType="com.idleItem.tradeSystem.entity.Address">
+        update notice
+        <set>
+            <if test="keySentence != null">
+                key_sentence = #{keySentence,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="announceTime != null">
+                announce_time = #{announceTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                admin_id= #{adminId,jdbcType=BIGINT},
+            </if>
+            <if test="adminName != null">
+                admin_name = #{adminName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.idleItem.tradeSystem.entity.Address">
+        update notice
+        set notice_type = #{noticeType,jdbcType=VARCHAR},
+            key_sentence = #{keySentence,jdbcType=VARCHAR},
+            content = #{content,jdbcType=VARCHAR},
+            announce_time = #{announceTime,jdbcType=TIMESTAMP},
+            admin_id= #{adminId,jdbcType=BIGINT},
+            admin_name = #{adminName,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

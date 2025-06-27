@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idleItem.tradeSystem.mapper.IdleItemMapper">
+  <resultMap id="BaseResultMap" type="com.idleItem.tradeSystem.entity.IdleItem">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="idle_name" jdbcType="VARCHAR" property="idleName" />
+    <result column="idle_details" jdbcType="VARCHAR" property="idleDetails" />
+    <result column="picture_list" jdbcType="VARCHAR" property="pictureList" />
+    <result column="idle_price" jdbcType="DECIMAL" property="idlePrice" />
+    <result column="idle_label" jdbcType="INTEGER" property="idleLabel" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="idle_status" jdbcType="TINYINT" property="idleStatus" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="attribute" jdbcType="TINYINT" property="attribute" />
+    <result column="lease_type" jdbcType="VARCHAR" property="leaseType" />
+    <result column="origin_price" jdbcType="INTEGER" property="originPrice" />
+    <result column="new_degree" jdbcType="VARCHAR" property="newDegree" />
+    <result column="countNum" jdbcType="DECIMAL" property="countNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, idle_name, idle_details, picture_list, idle_price , idle_label, release_time,
+    idle_status,user_id,attribute,lease_type,origin_price,new_degree,countNum
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getAllIdleItem" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where user_id = #{userId,jdbcType=BIGINT} and idle_status!=0 order by id desc
+  </select>
+  <select id="countIdleItem"  resultType="int">
+    select COUNT(*) from idle_item
+    where (idle_name LIKE "%"#{findValue}"%" or idle_details LIKE "%"#{findValue}"%")
+     and attribute= #{attribute} and idle_status = 1
+  </select>
+  <select id="countIdleItemByLabel"  resultType="int">
+    select COUNT(*) from idle_item
+    where idle_label = #{idleLabel} and attribute= #{attribute} and idle_status = 1
+  </select>
+  <select id="countIdleItemByStatus"  resultType="int">
+    select COUNT(*) from idle_item
+    where idle_status = #{status}
+  </select>
+  <select id="findIdleItem" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where (idle_name LIKE "%"#{findValue}"%" or idle_details LIKE "%"#{findValue}"%") and attribute= #{attribute}
+    and idle_status = 1 order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findIdleItemByLabel" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where idle_label = #{idleLabel} and attribute= #{attribute} and idle_status = 1 order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findAllIdleItem" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where (idle_name LIKE "%"#{findValue}"%" or idle_details LIKE "%"#{findValue}"%")
+    and idle_status = 1 order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findhotItem" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where idle_status = 1 order by countNum desc limit #{num}
+  </select>
+  <select id="findAllIdleItem1" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where idle_status = 1 order by id desc
+  </select>
+  <select id="findAllIdleItemByLabel" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where idle_label = #{idleLabel} and idle_status = 1 order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="getIdleItemByStatus" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item
+    where idle_status = #{status} order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findIdleByList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from idle_item where id in
+    <foreach collection="idList" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    order by countNum desc
+  </select>
+  <select id="selectGoodsListByIds" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select
+    <include refid="Base_Column_List"/>
+    from idle_item
+    <where>
+      <if test="goodIds != null and goodIds.size() > 0">
+        and id in
+        <foreach collection="goodIds" item="item" index="index" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from idle_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.IdleItem" useGeneratedKeys="true">
+    insert into idle_item (idle_name, idle_details, picture_list,idle_price,idle_label,release_time, idle_status, user_id, attribute,lease_type,origin_price,new_degree,countNum)
+    values (#{idleName,jdbcType=VARCHAR}, #{idleDetails,jdbcType=VARCHAR}, #{pictureList,jdbcType=VARCHAR},
+            #{idlePrice,jdbcType=DECIMAL}, #{idleLabel,jdbcType=INTEGER},#{releaseTime,jdbcType=TIMESTAMP},
+            #{idleStatus,jdbcType=TINYINT}, #{userId,jdbcType=BIGINT},#{attribute,jdbcType=TINYINT},
+            #{leaseType,jdbcType=TINYINT},#{originPrice,jdbcType=DECIMAL},#{newDegree,jdbcType=VARCHAR},0)
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.idleItem.tradeSystem.entity.IdleItem" useGeneratedKeys="true">
+    insert into idle_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="idleName != null">
+        idle_name,
+      </if>
+      <if test="idleDetails != null">
+        idle_details,
+      </if>
+      <if test="pictureList != null">
+        picture_list,
+      </if>
+      <if test="idlePrice != null">
+        idle_price,
+      </if>
+      <if test="idleLabel != null">
+        idle_label,
+      </if>
+      <if test="releaseTime != null">
+        release_time,
+      </if>
+      <if test="idleStatus != null">
+        idle_status,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="countNum != null">
+        countNum,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="idleName != null">
+        #{idleName,jdbcType=VARCHAR},
+      </if>
+      <if test="idleDetails != null">
+        #{idleDetails,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureList != null">
+        #{pictureList,jdbcType=VARCHAR},
+      </if>
+      <if test="idlePrice != null">
+        #{idlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="idleLabel != null">
+        #{idleLabel,jdbcType=INTEGER},
+      </if>
+      <if test="releaseTime != null">
+        #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idleStatus != null">
+        #{idleStatus,jdbcType=TINYINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="countNum != null">
+        #{countNum,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.idleItem.tradeSystem.entity.IdleItem">
+    update idle_item
+    <set>
+      <if test="idleName != null">
+        idle_name = #{idleName,jdbcType=VARCHAR},
+      </if>
+      <if test="idleDetails != null">
+        idle_details = #{idleDetails,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureList != null">
+        picture_list = #{pictureList,jdbcType=VARCHAR},
+      </if>
+      <if test="idlePrice != null">
+        idle_price = #{idlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="idleLabel != null">
+        idle_label = #{idleLabel,jdbcType=INTEGER},
+      </if>
+      <if test="releaseTime != null">
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idleStatus != null">
+        idle_status = #{idleStatus,jdbcType=TINYINT},
+      </if>
+      <if test="newDegree != null">
+        new_degree = #{newDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="countNum != null">
+        countNum= #{countNum,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.idleItem.tradeSystem.entity.IdleItem">
+    update idle_item
+    set idle_name = #{idleName,jdbcType=VARCHAR},
+        idle_details = #{idleDetails,jdbcType=VARCHAR},
+        picture_list = #{pictureList,jdbcType=VARCHAR},
+        idle_price = #{idlePrice,jdbcType=DECIMAL},
+        idle_label = #{idleLabel,jdbcType=INTEGER},
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+        idle_status = #{idleStatus,jdbcType=TINYINT},
+        user_id = #{userId,jdbcType=BIGINT},
+        attribute=#{attribute,jdbcType=TINYINT},
+        new_degree=#{newDegree,jdbcType=VARCHAR},
+        countNum = #{countNum,jdbcType=DECIMAL},
+        where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
